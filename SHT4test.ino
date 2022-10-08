@@ -7,15 +7,23 @@
   These sensors use I2C to communicate, 2 pins are required to  
   interface
  ****************************************************/
-
+#include <DS3231.h>
 #include "Adafruit_SHT4x.h"
+DS3231  rtc(SDA, SCL);
 
 Adafruit_SHT4x sht4 = Adafruit_SHT4x();
 
-void setup() {
-  Serial.begin(9600);
 
-  while (!Serial)
+void setup() {
+
+   rtc.begin(); 
+   Serial.begin(9600);
+
+   rtc.setDOW(SATURDAY);
+   //rtc.setTime(16, 52, 0);     // Set the time to 12:00:00 (24hr format)
+   rtc.setDate(8, 10, 2022);
+   
+   while (!Serial)
     delay(1000);     // will pause Zero, Leonardo, etc until serial console opens
 
   Serial.println("Adafruit SHT4x test");
@@ -39,7 +47,6 @@ void setup() {
      case SHT4X_LOW_PRECISION: 
        Serial.println("Low precision");
        break;
-  }
 
   // You can have 6 different heater settings
   // higher heat and longer times uses more power
@@ -76,6 +83,7 @@ void loop() {
   sensors_event_t humidity, temp;
   
   uint32_t timestamp = millis();
+  /*
   sht4.getEvent(&humidity, &temp);// populate temp and humidity objects with fresh data
   timestamp = millis() - timestamp;
 
@@ -83,8 +91,14 @@ void loop() {
   Serial.print("Humidity: "); Serial.print(humidity.relative_humidity); Serial.println("% rH");
 
   Serial.print("Read duration (ms): ");
-  Serial.println(timestamp);
-  Serial.println();
+  Serial.println(timestamp);*/
+  
+  Serial.print("Date: ");
+  Serial.print(rtc.getDateStr());
+  Serial.print(", Time: ");
+  Serial.println(rtc.getTimeStr());
+  
+
 
   delay(5000);
 }
